@@ -36,24 +36,33 @@ def read_json(path_file):
         return json.load(file)
 
 
+def re_write_file(path,data):
+    with open(path,"w") as rewrite:
+        json.dump(data, rewrite, indent=4)
+
 def write_json(path_file,data):
     dic=read_json(path_file)
     size=len(list(dic))
     dic[str('task'+str(size+1))]=data
-    with open(path_file,"w") as rewrite_file:
-        json.dump(dic, rewrite_file, indent=4)     
-
+    with open(path_file,"w") as no_rewrite_file:
+        json.dump(dic, no_rewrite_file, indent=4)     
 """ Args handling functions"""
 
 def add(descripcion):
     return descripcion
-def update(to_updte):
+
+def update(to_update):
     id_task=to_update[0]
     new_description=to_update[1]
-
+    #Udate in all
     dic=read_json(paths[0])
-
-
+    tasks=list(dic.items())
+    for i in range(len(tasks)):
+        if i == int(id_task)-1:
+            tasks[i][1]['description']=new_description
+            tasks[i][1]['updated_at']=getTime()
+    print(dic)
+    re_write_file(paths[0],dic)
 
 if __name__=='__main__':
 
@@ -84,6 +93,7 @@ if __name__=='__main__':
     
     if args.update:
         to_update=update(args.update)
-        print(to_update)
+
+        
 
 
