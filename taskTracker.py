@@ -18,6 +18,7 @@ parser=argparse.ArgumentParser(
 parser.add_argument("--add", '-a', type=str, help="Add the task description")
 parser.add_argument("--update", '-u', nargs=2, help="Enter the task id and the new description")
 parser.add_argument("--list","-l",nargs=1, help="List all the task")
+parser.add_argument("--markinprogress", "-mp", nargs=1, help="Mark in progress the task with the ID")
 #parser.add_argument("--prueba","-p",help="Este argumento es para hacer pruebas")
 #parser.add_argument("delete")
 
@@ -28,13 +29,11 @@ def getTime():
     time_string = time.strftime("%m/%d/%Y, %H:%M:%S", named_tuple)
     return time_string
 
-
 """JSON files handling functions"""
 
 def read_json(path_file):
     with open(path_file, 'r') as file:
         return json.load(file)
-
 
 def re_write_file(path,data):
     with open(path,"w") as rewrite:
@@ -46,6 +45,12 @@ def write_json(path_file,data):
     dic[str('task'+str(size+1))]=data
     with open(path_file,"w") as no_rewrite_file:
         json.dump(dic, no_rewrite_file, indent=4)     
+
+def create_file_if_not_exits(path):
+    if not os.path.exists(path):
+        with open(path,'w') as all_tasks_file:
+            json.dump({},all_tasks_file)
+
 """ Args handling functions"""
 
 def add(descripcion):
@@ -61,17 +66,28 @@ def update(to_update):
         if i == int(id_task)-1:
             tasks[i][1]['description']=new_description
             tasks[i][1]['updated_at']=getTime()
-    print(dic)
     re_write_file(paths[0],dic)
+
+def mark_in_progress(to_mark_in_progress):
+    create_file_if_not_exits(paths[2])
+    all_tasks_file=read_json(paths[0])
+    tasks=list(all_tasks_file.items())
+    for i in range(len(tasks)):
+        if i == int(to_mark_in_progress[0])-1:
+            tasks[i][1]['status']="in-progress"
+            copy=tasks[i][1]
+    write_json(paths[2],copy)
+
+
+
+
 
 if __name__=='__main__':
 
     args=parser.parse_args()
     print(args)
     #check if the all_tasks.json file exist
-    if not os.path.exists(paths[0]):
-        with open(paths[0],'w') as all_tasks_file:
-            json.dump({},all_tasks_file)
+    create_file_if_not_exits(paths[0])
     #Add
     if args.add:
         all_tasks_len=len(list(read_json(paths[0])))
@@ -93,6 +109,9 @@ if __name__=='__main__':
     
     if args.update:
         to_update=update(args.update)
+    if args.markinprogress:
+        mark_in_progress(args.markinprogress)
+
 
         
 
