@@ -19,7 +19,7 @@ parser.add_argument("--add", '-a', type=str, help="Add the task description")
 parser.add_argument("--update", '-u', nargs=2, help="Enter the task id and the new description")
 parser.add_argument("--markinprogress", "-mp", nargs=1, help="Mark in progress the task with the ID")
 parser.add_argument("--markdone","-md",nargs=1,help="Mark a task status as done with the id")
-parser.add_argument("--list","-l",nargs=1, help="List all the task")
+parser.add_argument("--list","-l",nargs='?',help="List all the task")
 
 #parser.add_argument("--prueba","-p",help="Este argumento es para hacer pruebas")
 #parser.add_argument("delete")
@@ -90,6 +90,21 @@ def mark_done(to_mark_done):
             copy=tasks[i][1]
     write_json(paths[3],copy)
 
+def list_all(which_list):
+
+    if which_list==None:
+        dic=read_json(paths[0])
+        for k,v in dic.items():
+            print(f"{k}: {v} ")
+    elif which_list=='in_progress':
+        dic=read_json(paths[2])
+        for k,v in dic.items():
+            print(f"{k}: {v} ")
+    elif which_list=='done':
+        dic=read_json(paths[3])
+        for k,v in dic.items():
+            print(f"{k}: {v} ")
+
 if __name__=='__main__':
 
     args=parser.parse_args()
@@ -121,7 +136,8 @@ if __name__=='__main__':
         mark_in_progress(args.markinprogress)
     if args.markdone:
         mark_done(args.markdone)
-    
+    if args.list==None or args.list!=None:
+        list_all(args.list)
 
 
         
