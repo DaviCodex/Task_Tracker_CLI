@@ -122,6 +122,23 @@ def update(task_update):
             tasks[i][1]['updated_at']=get_time()
     re_write_file(paths[0],dic)
 
+def delete(task_delete):
+    """This function deletes a specific task from the JSON file based on the task ID.
+    Keyword arguments:
+    task_delete -- a list where the first element is the task ID of the task to be deleted.
+    Return:
+    None
+    """
+    id_task=task_delete[0]
+    dic=read_json(paths[0])
+    tasks=list(dic.items())
+    print(tasks)
+    for i in range(len(tasks)):
+        if i == int(id_task)-1:
+            tasks.pop(i)
+    dic=dict(tasks)
+    re_write_file(paths[0],dic)
+
 def mark_in_progress(to_mark_in_progress):
     """This function marks a specific task as 'in-progress' 
     and adds it to a separate JSON file.
@@ -138,7 +155,7 @@ def mark_in_progress(to_mark_in_progress):
         if i == int(to_mark_in_progress[0])-1:
             tasks[i][1]['status']="in-progress"
             copy_in_progress=tasks[i][1]
-    write_json(paths[2],copy_in_progress)
+            write_json(paths[2],copy_in_progress)
 
 def mark_done(to_mark_done):
     """This function marks a specific task as 'done' 
@@ -156,7 +173,7 @@ def mark_done(to_mark_done):
         if i == int(to_mark_done[0])-1:
             tasks[i][1]['status']="done"
             copy_done=tasks[i][1]
-    write_json(paths[3],copy_done)
+            write_json(paths[3],copy_done)
 
 def list_all(which_list):
     """This function lists all tasks from a specific category 
@@ -167,7 +184,7 @@ def list_all(which_list):
     Return:
     None
     """
-    if which_list is None:
+    if which_list == 'all':
         dic=read_json(paths[0])
         for k,v in dic.items():
             print(f"{k}: {v} ")
@@ -206,9 +223,15 @@ if __name__=='__main__':
     #Update
     if args.update:
         update(args.update)
+    #Delete
+    if args.delete:
+        delete(args.delete)
+    #Mark in progress
     if args.markinprogress:
         mark_in_progress(args.markinprogress)
+    #Mark done
     if args.markdone:
         mark_done(args.markdone)
-    if args.list is None or args.list is not None:
+    #Print the list
+    if args.list is not None:
         list_all(args.list)
