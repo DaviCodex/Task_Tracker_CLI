@@ -76,8 +76,10 @@ def write_json(path_file,data):
     None
     """
     dic=read_json(path_file)
-    size=len(list(dic))
-    dic[str('task'+str(size+1))]=data
+    size=get_file_size(path_file)
+    new_key=create_key(size)
+    #error
+    dic[new_key]=data
     with open(path_file,"w", encoding="utf-8") as no_rewrite_file:
         json.dump(dic, no_rewrite_file, indent=4)
 
@@ -101,7 +103,6 @@ def add(descripcion):
     The input string `descripcion`.
     """
     return descripcion
-
 def update(task_update):
     """This function updates the description and updated_at 
     fields of a specific task in a JSON file.
@@ -132,7 +133,6 @@ def delete(task_delete):
     id_task=task_delete[0]
     dic=read_json(paths[0])
     tasks=list(dic.items())
-    print(tasks)
     for i in range(len(tasks)):
         if i == int(id_task)-1:
             tasks.pop(i)
@@ -197,6 +197,19 @@ def list_all(which_list):
         for k,v in dic.items():
             print(f"{k}: {v} ")
 
+#General Propouse functions
+def get_file_size(path):
+    dic=read_json(path)
+    dic=list(dic)
+    size=len(dic)
+    return size
+
+def create_key(size):
+    str1='task'
+    id_t=size+1
+    key=str1+str(id_t)
+    return key
+
 if __name__=='__main__':
 
     args=parser.parse_args()
@@ -205,7 +218,7 @@ if __name__=='__main__':
     create_file_if_not_exits(paths[0])
     #Add
     if args.add:
-        all_tasks_len=len(list(read_json(paths[0])))
+        all_tasks_len=get_file_size(paths[0])
         task_id=all_tasks_len+1
         description=add(args.add)
         status='todo'

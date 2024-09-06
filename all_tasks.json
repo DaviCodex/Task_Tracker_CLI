@@ -1,23 +1,16 @@
 {
     "task1": {
         "task_id": 1,
-        "description": "Lavar el carro",
-        "status": "todo",
-        "created_at": "09/01/2024, 20:54:06",
-        "updated_at": ""
-    },
-    "task3": {
-        "task_id": 3,
-        "description": "Limpiar cocina",
-        "status": "todo",
-        "created_at": "09/01/2024, 20:54:25",
-        "updated_at": ""
-    },
-    "task4": {
-        "task_id": 4,
         "description": "Lavar ropa",
         "status": "todo",
-        "created_at": "09/01/2024, 20:54:33",
+        "created_at": "09/05/2024, 23:30:05",
+        "updated_at": ""
+    },
+    "task2": {
+        "task_id": 2,
+        "description": "Lavar loza",
+        "status": "todo",
+        "created_at": "09/05/2024, 23:32:29",
         "updated_at": ""
     }
 }

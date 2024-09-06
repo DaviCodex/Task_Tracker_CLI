@@ -1,9 +1,0 @@
-{
-    "task1": {
-        "task_id": 1,
-        "description": "tender la cama",
-        "status": "in-progress",
-        "created_at": "08/30/2024, 19:22:36",
-        "updated_at": "08/30/2024, 19:55:03"
-    }
-}
