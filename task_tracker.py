@@ -29,7 +29,7 @@ parser=argparse.ArgumentParser(
     epilog="later"
 )
 parser.add_argument("--add", '-a', type=str, help=helps[0])
-parser.add_argument("--update", '-u', nargs=2, help=helps[1], default=[2,"Something_else"])
+parser.add_argument("--update", '-u', nargs=2, help=helps[1])
 parser.add_argument("--delete","-d", nargs=1,help=helps[2])
 parser.add_argument("--markinprogress", "-mp", nargs=1, help=helps[3])
 parser.add_argument("--markdone","-md",nargs=1,help=helps[4])
@@ -54,7 +54,7 @@ def add(descripcion):
     """
     all_tasks_len=funcs.get_file_size(paths[0])
     task_id=all_tasks_len+1
-    description=descripcion
+    description=descripcion[0]
     status='todo'
     created_at=get_time()
     task={
@@ -96,13 +96,14 @@ def delete(task_delete):
     None
     """
     id_task=task_delete[0]
-    #dic=read_json(paths[0])
+    dic=Json_handle.read_json(paths[0])
     tasks=list(dic.items())
     for i in range(len(tasks)):
         if i == int(id_task)-1:
             tasks.pop(i)
     dic=dict(tasks)
-    #re_write_file(paths[0],dic)
+    dic_ordered=funcs.re_order_dic(dic)
+    Json_handle.write_json(paths[0],dic_ordered,True)
 
 #def mark_in_progress(to_mark_in_progress):
     """This function marks a specific task as 'in-progress' 
@@ -171,14 +172,13 @@ if __name__=='__main__':
     Json_handle.create_file_if_not_exits(paths[0])
     #Add
     if args.add:
-        print(args.add)
         add(args.add)
     #Update
     if args.update:
         update(args.update)
     #Delete
-    #if args.delete:
-        #delete(args.delete)
+    if args.delete:
+        delete(args.delete)
     #Mark in progress
     #if args.markinprogress:
         #mark_in_progress(args.markinprogress)

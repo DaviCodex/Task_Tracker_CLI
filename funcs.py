@@ -11,3 +11,22 @@ def create_key(size):
     id_t=size+1
     key=str1+str(id_t)
     return key
+
+def re_order_dic(dic):
+    values=dic.values()
+    values=change_ids(values)
+    size=len(list(dic))
+    new_keys=[]
+    base='task'
+    for i in range(size):
+        new_key=base+str(i+1)
+        new_keys.append(new_key)
+    new_dic=dict(zip(new_keys,values))
+    return new_dic
+
+def change_ids(list_dicts):
+    list_dicts=list(list_dicts)
+    size=len(list_dicts)
+    for i in range(size):
+        list_dicts[i]['task_id']=i+1
+    return list_dicts

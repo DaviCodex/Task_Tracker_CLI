@@ -23,7 +23,7 @@ def read_json(path_file):
     with open(path_file, 'r', encoding="utf-8") as file:
         return json.load(file)
 
-def write_json(path_file,data,update):
+def write_json(path_file,data,update=False):
     """This function reads a JSON file, adds new data under a unique task key, 
     and writes it back to the file.
     Keyword arguments:
