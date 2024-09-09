@@ -28,8 +28,8 @@ parser=argparse.ArgumentParser(
     description="later",
     epilog="later"
 )
-parser.add_argument("--add", '-a', type=str, help=helps[0], default="Somenthing")
-parser.add_argument("--update", '-u', nargs=2, help=helps[1])
+parser.add_argument("--add", '-a', type=str, help=helps[0])
+parser.add_argument("--update", '-u', nargs=2, help=helps[1], default=[2,"Something_else"])
 parser.add_argument("--delete","-d", nargs=1,help=helps[2])
 parser.add_argument("--markinprogress", "-mp", nargs=1, help=helps[3])
 parser.add_argument("--markdone","-md",nargs=1,help=helps[4])
@@ -68,7 +68,7 @@ def add(descripcion):
     Json_handle.write_json(all_tasks_path,task)
     print("Task added successfully"+"("+"ID: "+str(task["task_id"])+")")
 
-#def update(task_update):
+def update(task_update):
     """This function updates the description and updated_at 
     fields of a specific task in a JSON file.
     Keyword arguments:
@@ -77,19 +77,17 @@ def add(descripcion):
     Return:
     None
     """
-    #id_task=task_update[0]
-    #new_description=task_update[1]
-    #Udate in all
-    #dic=read_json(paths[0])
-    #tasks=list(dic.items())
-    #for i in range(len(tasks)):
-        #if i == int(id_task)-1:
-            #tasks[i][1]['description']=new_description
-            #tasks[i][1]['updated_at']=get_time()
-    #re_write_file(paths[0],dic)
+    id_task=task_update[0]
+    new_description=task_update[1]
+    dic=Json_handle.read_json(paths[0])
+    tasks=list(dic.items())
+    print(tasks)
+    for i in range(len(tasks)):
+        if i == int(id_task)-1:
+            tasks[i][1]['description']=new_description
+            tasks[i][1]['updated_at']=get_time()
+    Json_handle.write_json(paths[0],dic,True)
 
-"""
-"""
 def delete(task_delete):
     """This function deletes a specific task from the JSON file based on the task ID.
     Keyword arguments:
@@ -176,8 +174,8 @@ if __name__=='__main__':
         print(args.add)
         add(args.add)
     #Update
-    #if args.update:
-        #update(args.update)
+    if args.update:
+        update(args.update)
     #Delete
     #if args.delete:
         #delete(args.delete)
