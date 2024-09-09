@@ -4,10 +4,10 @@
     *Handle the args from the CLI
     *Handle the time 
 """
-import os
-import json
 import argparse
 import time
+import Json_handle
+import funcs
 #Variables
 task_id=0
 description=''
@@ -28,7 +28,7 @@ parser=argparse.ArgumentParser(
     description="later",
     epilog="later"
 )
-parser.add_argument("--add", '-a', type=str, help=helps[0])
+parser.add_argument("--add", '-a', type=str, help=helps[0], default="Somenthing")
 parser.add_argument("--update", '-u', nargs=2, help=helps[1])
 parser.add_argument("--delete","-d", nargs=1,help=helps[2])
 parser.add_argument("--markinprogress", "-mp", nargs=1, help=helps[3])
@@ -44,57 +44,7 @@ def get_time():
     named_tuple = time.localtime() # get struct_time
     time_string = time.strftime("%m/%d/%Y, %H:%M:%S", named_tuple)
     return time_string
-#JSON files handling functions
-def read_json(path_file):
-    """This function reads a JSON file and returns its contents as a dictionary.
-    Keyword arguments:
-    path_file -- a string representing the path of the file to be read.
-    Return: 
-    A dictionary containing the data from the JSON file.
-    """
-    with open(path_file, 'r', encoding="utf-8") as file:
-        return json.load(file)
-
-def re_write_file(path,data):
-    """This function writes a dictionary to a JSON file, overwriting its contents.
-    Keyword arguments:
-    path -- a string representing the path of the file to be written.
-    data -- a dictionary containing the data to be written to the JSON file.
-    Return: 
-    None
-    """
-    with open(path,"w", encoding="utf-8") as rewrite:
-        json.dump(data, rewrite, indent=4)
-
-def write_json(path_file,data):
-    """This function reads a JSON file, adds new data under a unique task key, 
-    and writes it back to the file.
-    Keyword arguments:
-    path_file -- a string representing the path of the file to be written.
-    data -- a dictionary containing the data to be added to the JSON file.  
-    Return: 
-    None
-    """
-    dic=read_json(path_file)
-    size=get_file_size(path_file)
-    new_key=create_key(size)
-    #error
-    dic[new_key]=data
-    with open(path_file,"w", encoding="utf-8") as no_rewrite_file:
-        json.dump(dic, no_rewrite_file, indent=4)
-
-def create_file_if_not_exits(path):
-    """This function checks if a JSON file exists at the specified path, 
-    and creates an empty JSON file if it does not.
-    Keyword arguments:
-    path -- a string representing the path of the file to be checked or created.
-    Return: 
-    None
-    """
-    if not os.path.exists(path):
-        with open(path,'w', encoding="utf-8") as all_tasks_file:
-            json.dump({},all_tasks_file)
-#Args handling functions
+#CRUD
 def add(descripcion):
     """This function takes a description as input of the CLI and returns it unchanged.
     Keyword arguments:
@@ -102,8 +52,23 @@ def add(descripcion):
     Return: 
     The input string `descripcion`.
     """
-    return descripcion
-def update(task_update):
+    all_tasks_len=funcs.get_file_size(paths[0])
+    task_id=all_tasks_len+1
+    description=descripcion
+    status='todo'
+    created_at=get_time()
+    task={
+            "task_id":task_id, 
+            "description":description, 
+            "status":status, 
+            "created_at":created_at, 
+            "updated_at":updated_at
+        }
+    all_tasks_path=paths[0]
+    Json_handle.write_json(all_tasks_path,task)
+    print("Task added successfully"+"("+"ID: "+str(task["task_id"])+")")
+
+#def update(task_update):
     """This function updates the description and updated_at 
     fields of a specific task in a JSON file.
     Keyword arguments:
@@ -112,17 +77,19 @@ def update(task_update):
     Return:
     None
     """
-    id_task=task_update[0]
-    new_description=task_update[1]
+    #id_task=task_update[0]
+    #new_description=task_update[1]
     #Udate in all
-    dic=read_json(paths[0])
-    tasks=list(dic.items())
-    for i in range(len(tasks)):
-        if i == int(id_task)-1:
-            tasks[i][1]['description']=new_description
-            tasks[i][1]['updated_at']=get_time()
-    re_write_file(paths[0],dic)
+    #dic=read_json(paths[0])
+    #tasks=list(dic.items())
+    #for i in range(len(tasks)):
+        #if i == int(id_task)-1:
+            #tasks[i][1]['description']=new_description
+            #tasks[i][1]['updated_at']=get_time()
+    #re_write_file(paths[0],dic)
 
+"""
+"""
 def delete(task_delete):
     """This function deletes a specific task from the JSON file based on the task ID.
     Keyword arguments:
@@ -131,15 +98,15 @@ def delete(task_delete):
     None
     """
     id_task=task_delete[0]
-    dic=read_json(paths[0])
+    #dic=read_json(paths[0])
     tasks=list(dic.items())
     for i in range(len(tasks)):
         if i == int(id_task)-1:
             tasks.pop(i)
     dic=dict(tasks)
-    re_write_file(paths[0],dic)
+    #re_write_file(paths[0],dic)
 
-def mark_in_progress(to_mark_in_progress):
+#def mark_in_progress(to_mark_in_progress):
     """This function marks a specific task as 'in-progress' 
     and adds it to a separate JSON file.
     Keyword arguments:
@@ -148,16 +115,16 @@ def mark_in_progress(to_mark_in_progress):
     Return:
     None
     """
-    create_file_if_not_exits(paths[2])
-    all_tasks_file=read_json(paths[0])
-    tasks=list(all_tasks_file.items())
-    for i in range(len(tasks)):
-        if i == int(to_mark_in_progress[0])-1:
-            tasks[i][1]['status']="in-progress"
-            copy_in_progress=tasks[i][1]
-            write_json(paths[2],copy_in_progress)
+    #create_file_if_not_exits(paths[2])
+    #all_tasks_file=read_json(paths[0])
+    #tasks=list(all_tasks_file.items())
+    #for i in range(len(tasks)):
+        #if i == int(to_mark_in_progress[0])-1:
+            #tasks[i][1]['status']="in-progress"
+            #copy_in_progress=tasks[i][1]
+            #write_json(paths[2],copy_in_progress)
 
-def mark_done(to_mark_done):
+#def mark_done(to_mark_done):
     """This function marks a specific task as 'done' 
     and adds it to a separate JSON file.
     Keyword arguments:
@@ -166,16 +133,16 @@ def mark_done(to_mark_done):
     Return:
     None
     """
-    create_file_if_not_exits(paths[3])
-    all_tasks_file=read_json(paths[0])
-    tasks=list(all_tasks_file.items())
-    for i in range(len(tasks)):
-        if i == int(to_mark_done[0])-1:
-            tasks[i][1]['status']="done"
-            copy_done=tasks[i][1]
-            write_json(paths[3],copy_done)
+    #create_file_if_not_exits(paths[3])
+    #all_tasks_file=read_json(paths[0])
+    #tasks=list(all_tasks_file.items())
+    #for i in range(len(tasks)):
+        #if i == int(to_mark_done[0])-1:
+            #tasks[i][1]['status']="done"
+            #copy_done=tasks[i][1]
+            #write_json(paths[3],copy_done)
 
-def list_all(which_list):
+#def list_all(which_list):
     """This function lists all tasks from a specific category 
     or from the main task list, based on the input parameter.
     Keyword arguments:
@@ -184,67 +151,42 @@ def list_all(which_list):
     Return:
     None
     """
-    if which_list == 'all':
-        dic=read_json(paths[0])
-        for k,v in dic.items():
-            print(f"{k}: {v} ")
-    elif which_list=='in_progress':
-        dic=read_json(paths[2])
-        for k,v in dic.items():
-            print(f"{k}: {v} ")
-    elif which_list=='done':
-        dic=read_json(paths[3])
-        for k,v in dic.items():
-            print(f"{k}: {v} ")
+    #if which_list == 'all':
+        #dic=read_json(paths[0])
+        #for k,v in dic.items():
+            #print(f"{k}: {v} ")
+    #elif which_list=='in_progress':
+        #dic=read_json(paths[2])
+        #for k,v in dic.items():
+            #print(f"{k}: {v} ")
+    #elif which_list=='done':
+        #dic=read_json(paths[3])
+        #for k,v in dic.items():
+            #print(f"{k}: {v} ")
 
 #General Propouse functions
-def get_file_size(path):
-    dic=read_json(path)
-    dic=list(dic)
-    size=len(dic)
-    return size
-
-def create_key(size):
-    str1='task'
-    id_t=size+1
-    key=str1+str(id_t)
-    return key
-
 if __name__=='__main__':
 
     args=parser.parse_args()
     print(args)
     #check if the all_tasks.json file exist
-    create_file_if_not_exits(paths[0])
+    Json_handle.create_file_if_not_exits(paths[0])
     #Add
     if args.add:
-        all_tasks_len=get_file_size(paths[0])
-        task_id=all_tasks_len+1
-        description=add(args.add)
-        status='todo'
-        created_at=get_time()
-        #Creating the task dict
-        task={
-            "task_id":task_id, 
-            "description":description, 
-            "status":status, 
-            "created_at":created_at, 
-            "updated_at":updated_at
-        }
-        write_json(paths[0],task)
-        print("Task added successfully"+"("+"ID: "+str(task["task_id"])+")")
+        print(args.add)
+        add(args.add)
     #Update
-    if args.update:
-        update(args.update)
+    #if args.update:
+        #update(args.update)
     #Delete
-    if args.delete:
-        delete(args.delete)
+    #if args.delete:
+        #delete(args.delete)
     #Mark in progress
-    if args.markinprogress:
-        mark_in_progress(args.markinprogress)
+    #if args.markinprogress:
+        #mark_in_progress(args.markinprogress)
     #Mark done
-    if args.markdone:
-        mark_done(args.markdone)
+    #if args.markdone:
+        #mark_done(args.markdone)
     #Print the list
-    if args.list is not None:
-        list_all(args.list)
+    #if args.list is not None:
+        #list_all(args.list)
