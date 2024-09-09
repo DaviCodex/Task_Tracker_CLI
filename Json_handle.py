@@ -43,3 +43,4 @@ def write_json(path_file,data,update=False):
         dic[new_key]=data
         with open(path_file,"w", encoding="utf-8") as no_rewrite_file:
             json.dump(dic, no_rewrite_file, indent=4)
+

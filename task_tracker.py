@@ -105,7 +105,7 @@ def delete(task_delete):
     dic_ordered=funcs.re_order_dic(dic)
     Json_handle.write_json(paths[0],dic_ordered,True)
 
-#def mark_in_progress(to_mark_in_progress):
+def mark_in_progress(to_mark_in_progress):
     """This function marks a specific task as 'in-progress' 
     and adds it to a separate JSON file.
     Keyword arguments:
@@ -114,16 +114,18 @@ def delete(task_delete):
     Return:
     None
     """
-    #create_file_if_not_exits(paths[2])
-    #all_tasks_file=read_json(paths[0])
-    #tasks=list(all_tasks_file.items())
-    #for i in range(len(tasks)):
-        #if i == int(to_mark_in_progress[0])-1:
-            #tasks[i][1]['status']="in-progress"
-            #copy_in_progress=tasks[i][1]
-            #write_json(paths[2],copy_in_progress)
+    id_change=int(to_mark_in_progress[0])
+    Json_handle.create_file_if_not_exits(paths[2])
+    all_tasks_file=Json_handle.read_json(paths[0])
+    tasks=list(all_tasks_file.items())
+    for i in range(len(tasks)):
+        if i == id_change-1:
+            tasks[i][1]['status']="in-progress"
+            copy_in_progress=tasks[i][1]
+            Json_handle.write_json(paths[2],copy_in_progress)
+            delete([i])
 
-#def mark_done(to_mark_done):
+def mark_done(to_mark_done):
     """This function marks a specific task as 'done' 
     and adds it to a separate JSON file.
     Keyword arguments:
@@ -132,16 +134,17 @@ def delete(task_delete):
     Return:
     None
     """
-    #create_file_if_not_exits(paths[3])
-    #all_tasks_file=read_json(paths[0])
-    #tasks=list(all_tasks_file.items())
-    #for i in range(len(tasks)):
-        #if i == int(to_mark_done[0])-1:
-            #tasks[i][1]['status']="done"
-            #copy_done=tasks[i][1]
-            #write_json(paths[3],copy_done)
+    Json_handle.create_file_if_not_exits(paths[3])
+    all_tasks_file=Json_handle.read_json(paths[0])
+    tasks=list(all_tasks_file.items())
+    for i in range(len(tasks)):
+        if i == int(to_mark_done[0])-1:
+            tasks[i][1]['status']="done"
+            copy_done=tasks[i][1]
+            Json_handle.write_json(paths[3],copy_done)
+            delete([i])
 
-#def list_all(which_list):
+def list_all(which_list):
     """This function lists all tasks from a specific category 
     or from the main task list, based on the input parameter.
     Keyword arguments:
@@ -150,18 +153,18 @@ def delete(task_delete):
     Return:
     None
     """
-    #if which_list == 'all':
-        #dic=read_json(paths[0])
-        #for k,v in dic.items():
-            #print(f"{k}: {v} ")
-    #elif which_list=='in_progress':
-        #dic=read_json(paths[2])
-        #for k,v in dic.items():
-            #print(f"{k}: {v} ")
-    #elif which_list=='done':
-        #dic=read_json(paths[3])
-        #for k,v in dic.items():
-            #print(f"{k}: {v} ")
+    if which_list == 'all':
+        dic=Json_handle.read_json(paths[0])
+        for k,v in dic.items():
+            print(f"{k}: {v} ")
+    elif which_list=='in_progress':
+        dic=Json_handle.read_json(paths[2])
+        for k,v in dic.items():
+            print(f"{k}: {v} ")
+    elif which_list=='done':
+        dic=Json_handle.read_json(paths[3])
+        for k,v in dic.items():
+            print(f"{k}: {v} ")
 
 #General Propouse functions
 if __name__=='__main__':
@@ -180,11 +183,11 @@ if __name__=='__main__':
     if args.delete:
         delete(args.delete)
     #Mark in progress
-    #if args.markinprogress:
-        #mark_in_progress(args.markinprogress)
+    if args.markinprogress:
+        mark_in_progress(args.markinprogress)
     #Mark done
-    #if args.markdone:
-        #mark_done(args.markdone)
+    if args.markdone:
+        mark_done(args.markdone)
     #Print the list
-    #if args.list is not None:
-        #list_all(args.list)
+    if args.list is not None:
+        list_all(args.list)
