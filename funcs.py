@@ -30,3 +30,16 @@ def change_ids(list_dicts):
     for i in range(size):
         list_dicts[i]['task_id']=i+1
     return list_dicts
+def checking_status(dic):
+    list_dict=list(dic.values())
+    size=len(list_dict)
+    status_list=[]
+    for i in range(size):
+        status=list_dict[i]['status']
+        status_list.append(status)
+    return status_list
+def get_contents_dic(dic):
+    items=dic.items()
+    items=list(items)
+    return items 
+
